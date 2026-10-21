@@ -12,18 +12,20 @@ def kpi_html():
     region = request.args.get("region")
     regiony = dostepne_regiony("dane/zamowienia.csv")
     
-    if region not in regiony:
+    # Dodane sprawdzenie: przerywamy tylko gdy region został podany, ale jest nieznany
+    if region is not None and region not in regiony:
         abort(404, description=f"Nieznany region: {region}")
         
     dane = policz_wskazniki("dane/zamowienia.csv", region)
-    return f"<h1>Wskaźniki: {region}</h1><p>Marża: {dane['marza']:.2%}</p>"
+    tekst_region = region if region else "Całość"
+    return f"<h1>Wskaźniki: {tekst_region}</h1><p>Marża: {dane['marza']:.2%}</p>"
 
 @app.get("/api/kpi")
 def kpi_json():
     region = request.args.get("region")
     regiony = dostepne_regiony("dane/zamowienia.csv")
     
-    if region not in regiony:
+    if region is not None and region not in regiony:
         abort(404, description=f"Nieznany region: {region}")
         
     dane = policz_wskazniki("dane/zamowienia.csv", region)

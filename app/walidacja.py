@@ -1,0 +1,1 @@
+from .validators import parametr_int

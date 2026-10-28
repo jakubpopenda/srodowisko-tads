@@ -30,3 +30,10 @@ def policz_wskazniki(sciezka, region=None):
         'koszt': koszt,
         'marza': marza
     }
+RAPORTY = []
+
+def zapisz_raport(rok, region):
+    RAPORTY.append({"rok": int(rok), "region": region})
+
+def raporty_roku(rok):
+    return [r for r in RAPORTY if r["rok"] == int(rok)]

@@ -1,3 +1,4 @@
+from datetime import date
 from flask import Blueprint, request, abort, current_app, redirect, url_for, render_template
 from .services import policz_wskazniki, dostepne_regiony, raporty_roku, zapisz_raport, zestawienie_regionow
 
@@ -22,7 +23,7 @@ def kpi():
     zestawienie = zestawienie_regionow(sciezka)
     current_app.logger.info("Obliczono wskaźniki dla regionu %s", dane["region"])
     
-    return render_template("panel.html", wskazniki=dane, zestawienie=zestawienie)
+    return render_template("panel.html", wskazniki=dane, zestawienie=zestawienie, dzisiaj=date.today())
 
 @panel_bp.get("/regiony/<region:kod>")
 def region(kod):
@@ -34,7 +35,7 @@ def region(kod):
         
     dane = policz_wskazniki(sciezka, kod)
     zestawienie = zestawienie_regionow(sciezka)
-    return render_template("panel.html", wskazniki=dane, zestawienie=zestawienie)
+    return render_template("panel.html", wskazniki=dane, zestawienie=zestawienie, dzisiaj=date.today())
 
 @panel_bp.get("/raporty/", defaults={"rok": ROK_DOMYSLNY})
 @panel_bp.get("/raporty/<int(min=2020, max=2030):rok>")

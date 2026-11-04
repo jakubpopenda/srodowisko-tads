@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, render_template
 from werkzeug.exceptions import HTTPException
 
 def zarejestruj_obsluge_bledow(app):
@@ -6,4 +6,4 @@ def zarejestruj_obsluge_bledow(app):
     def obsluz_blad(e):
         if request.path.startswith("/api"):
             return jsonify(blad=e.description, kod=e.code), e.code
-        return f"<h1>{e.code}</h1><p>Żądanie nie mogło zostać zrealizowane</p>", e.code
+        return render_template("errors/error.html", kod=e.code, opis=e.description), e.code

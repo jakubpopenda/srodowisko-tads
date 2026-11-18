@@ -27,12 +27,19 @@ def policz_wskazniki(sciezka, region=None, rok=None):
         "liczba_zamowien": len(wiersze),
     }
 RAPORTY = []
+_RAPORTY = []
 
-def zapisz_raport(rok, region):
-    RAPORTY.append({"rok": int(rok), "region": region})
+
+def zapisz_raport(rok, region, uwagi=""):
+    _RAPORTY.append({"rok": rok, "region": region, "uwagi": uwagi})
+
 
 def raporty_roku(rok):
-    return [r for r in RAPORTY if r["rok"] == int(rok)]
+    return [r for r in _RAPORTY if r["rok"] == rok]
+
+
+def wykaz_raportow():
+    return list(_RAPORTY)
 
 def zestawienie_regionow(sciezka):
     regiony = dostepne_regiony(sciezka)

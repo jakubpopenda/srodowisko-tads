@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, SelectField
-from wtforms.validators import NumberRange, Optional
+from wtforms import BooleanField, IntegerField, SelectField, SubmitField, TextAreaField
+from wtforms.validators import InputRequired, Length, NumberRange, Optional, ValidationError
 
 ROK_MIN, ROK_MAX = 2020, 2030
 
@@ -22,3 +22,34 @@ class FiltrForm(FormularzBazowy):
             NumberRange(min=ROK_MIN, max=ROK_MAX, message="Zakres 2020-2030"),
         ],
     )
+
+
+class RaportForm(FormularzBazowy):
+    rok = IntegerField(
+        "Rok obrachunkowy",
+        validators=[
+            InputRequired(message="Pole jest wymagane"),
+            NumberRange(min=ROK_MIN, max=ROK_MAX, message="Zakres 2020-2030"),
+        ],
+    )
+    region = SelectField(
+        "Region",
+        validators=[InputRequired(message="Pole jest wymagane")],
+    )
+    szczegoly = BooleanField("Dołącz pozycje szczegółowe")
+    uwagi = TextAreaField(
+        "Uwagi",
+        validators=[
+            Optional(),
+            Length(max=200, message="Najwyżej 200 znaków"),
+        ],
+    )
+    zapisz = SubmitField("Zapisz raport")
+
+    def __init__(self, *args, istniejace=(), **kwargs):
+        super().__init__(*args, **kwargs)
+        self._istniejace = set(istniejace)
+
+    def validate_rok(self, pole):
+        if (pole.data, self.region.data) in self._istniejace:
+            raise ValidationError("Raport za ten rok i region już istnieje")

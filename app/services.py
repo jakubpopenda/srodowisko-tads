@@ -8,27 +8,23 @@ def dostepne_regiony(sciezka):
     zamowienia = wczytaj_zamowienia(sciezka)
     return sorted(list(set(wiersz['region'] for wiersz in zamowienia)))
 
-def policz_wskazniki(sciezka, region=None):
-    zamowienia = wczytaj_zamowienia(sciezka)
-    
-    if region is not None:
-        zamowienia = [w for w in zamowienia if w['region'] == region]
-        
-    liczba_zamowien = len(zamowienia)
-    przychod = sum(float(w['przychod']) for w in zamowienia)
-    koszt = sum(float(w['koszt']) for w in zamowienia)
-    
-    if przychod == 0:
-        marza = 0.0
-    else:
-        marza = round((przychod - koszt) / przychod, 4)
-        
+def policz_wskazniki(sciezka, region=None, rok=None):
+    wiersze = wczytaj_zamowienia(sciezka)  # lub Twoja dotychczasowa funkcja odczytu CSV
+    if region:
+        wiersze = [z for z in wiersze if z["region"] == region]
+    if rok is not None:
+        wiersze = [z for z in wiersze if z["data"].startswith(str(rok))]
+
+    przychod = sum(float(z["przychod"]) for z in wiersze)
+    koszt = sum(float(z["koszt"]) for z in wiersze)
+    marza = round((przychod - koszt) / przychod, 4) if przychod else 0.0
+
     return {
-        'region': region,
-        'liczba_zamowien': liczba_zamowien,
-        'przychod': przychod,
-        'koszt': koszt,
-        'marza': marza
+        "region": region or "wszystkie",
+        "przychod": przychod,
+        "koszt": koszt,
+        "marza": marza,
+        "liczba_zamowien": len(wiersze),
     }
 RAPORTY = []
 

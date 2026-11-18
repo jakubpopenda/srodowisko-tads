@@ -1,5 +1,5 @@
 import csv
-
+import io
 def wczytaj_zamowienia(sciezka):
     with open(sciezka, mode='r', encoding='utf-8') as plik:
         return list(csv.DictReader(plik))
@@ -44,3 +44,13 @@ def wykaz_raportow():
 def zestawienie_regionow(sciezka):
     regiony = dostepne_regiony(sciezka)
     return [policz_wskazniki(sciezka, r) for r in sorted(regiony)]
+
+def wczytaj_zbior(strumien):
+    tekst = strumien.read().decode("utf-8")
+    czytnik = csv.DictReader(io.StringIO(tekst))
+    naglowek = set(czytnik.fieldnames or [])
+    wymagane = {"data", "region", "przychod", "koszt"}
+    brakujace = sorted(wymagane - naglowek)
+    if brakujace:
+        raise ValueError(f"brak kolumn: {', '.join(brakujace)}")
+    return sum(1 for _ in czytnik)
